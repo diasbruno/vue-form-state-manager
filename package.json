@@ -1,14 +1,11 @@
 {
   "name": "vue-form-state-manager",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Simple form state manager as directive.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/diasbruno/vue-form-state.git"
+    "url": "git+https://github.com/diasbruno/vue-form-state-manager.git"
   },
   "keywords": [
     "vue",
@@ -17,7 +14,7 @@
   "author": "Bruno Dias",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/diasbruno/vue-form-state/issues"
+    "url": "https://github.com/diasbruno/vue-form-state-manager/issues"
   },
-  "homepage": "https://github.com/diasbruno/vue-form-state#readme"
+  "homepage": "https://github.com/diasbruno/vue-form-state-manager#readme"
 }
