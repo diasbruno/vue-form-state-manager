@@ -1,20 +1,41 @@
+const Vue = require("vue");
+
+const majorVersion = /^(\d)/.exec(Vue.version)[1];
+
+const vueNotSupported = (v) => {
+  throw new Error(`Vue ${v} is not supported.`);
+}
+
+const vueNotImplemented = (v) => {
+  throw new Error(`Vue ${v} is not supported.`);
+}
+
+const _vnodeInstance = {
+  1: n => vueNotSupported("2<"), // n.componentInstance,
+  2: n => n.context,
+  3: () => vueNotImplemented("2>")
+};
+const vnodeInstance = _vnodeInstance[majorVersion];
+
+const _vnodeValue = {
+  1: n => vueNotSupported("2<"), // n.data.model.value
+  2: n => n.data.domProps.value,
+  3: () => vueNotImplemented("2>")
+};
+const vnodeValue = _vnodeValue[majorVersion];
+
+const checkInputType = (e, t) => e.nodeName.toLowerCase() === t;
+const isInput = e => checkInputType(e, "input");
+const isForm = e => checkInputType(e,"form");
+
+// End of DOM and Vue related stuff...
+
 const formTable = {};
 const formNodes = {};
 
-function isInput(el) {
-  return el.nodeName.toLowerCase() === "input";
-}
-
-function isForm(el) {
-  return el.nodeName.toLowerCase() === "form";
-}
-
-function vnodeValue(node) {
-  return node.data.model.value;
-}
-
 function formUpdate(el, binding, vnode, pristine = true) {
   let current = formTable[vnode.tag];
+  const dirty = current.initialValue !== vnodeValue(vnode);
   current = (formTable[vnode.tag] = {
     ...current,
     pristine,
@@ -22,34 +43,36 @@ function formUpdate(el, binding, vnode, pristine = true) {
   });
 }
 
-export function formState(formId) {
-  let state = { pristine: true, dirty: true };
-  const nodeIds = formNodes[formId];
-  for (let n of nodeIds) {
-    const { pristine, dirty } = formTable[n];
-    state.pristine = state.pristine && pristine;
-    state.dirty = state.dirty && dirty;
-  }
-  return state;
-}
-
-export function formIsDirty(formId) {
-  return formState(formId).isDirty;
-}
-
-export function formIsPristine(formId) {
-  return formState(formId).pristine;
-}
-
-export default {
+module.exports = {
+  formState(formId) {
+    let state = { pristine: true, dirty: true };
+    const nodeIds = formNodes[formId];
+    for (let n of nodeIds) {
+      const { pristine, dirty } = formTable[n];
+      state.pristine = state.pristine && pristine;
+      state.dirty = state.dirty && dirty;
+    }
+    return state;
+  },
+  formIsDirty(formId) {
+    return this.formState(formId).isDirty;
+  },
+  formIsPristine(formId) {
+    return this.formState(formId).pristine;
+  },
   bind(el, binding, vnode) {
     let self = this;
     let { tag } = vnode;
     let target = el;
 
-    const vm = vnode.componentInstance;
+    const updater = event => formUpdate(el, binding, vnode, false);
+
+    el.addEventListener('blur', updater, false);
+    el.addEventListener('focus', updater, false);
+
+    const vm = vnodeInstance(vnode, binding);
+
     if (vm) {
-      const updater = () => formUpdate(el, binding, vnode, false);
       vm.$on('blur', updater);
       vm.$on('focus', updater);
     }
