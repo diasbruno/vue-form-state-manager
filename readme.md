@@ -14,7 +14,7 @@ Vue.directive('form-control', FormState);
 Use:
 
 ```vue
-<input ... form-control="'unique_name'" />
+<input ... form-control="'field_name'" />
 ```
 
 Checking the form state:
@@ -27,9 +27,25 @@ formState(formId).dirty == formIsDirty(formId);
 formState(formId).pristine == formIsPristine(formId);
 ```
 
+Reseting a single input:
+
+```js
+export default {
+  name: "MyComp",
+  ...
+  methods: {
+    myMethod() {
+      this.prop = NEW_VALUE;
+      resetInitialValueFor("test-form", "field-name", this.prop);
+    }
+  },
+  ...
+}
+```
+
 ## roadmap
 
-- [ ] API to control the state programmatically.
+- [x] API to control the state programmatically.
 
 ## licence
 

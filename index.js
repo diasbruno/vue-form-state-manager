@@ -57,6 +57,9 @@ function formFieldUpdate(el, binding, vnode, pristine = true) {
 }
 
 module.exports = {
+  resetInitialValueFor(form, name, value) {
+    formFieldInit(form, name, value);
+  },
   formState(formId) {
     let state = { pristine: true, dirty: true };
     const nodeIds = formNodes[formId];

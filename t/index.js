@@ -73,3 +73,22 @@ test('make the form dirty.', async () => {
     formState("test-form")
   ).toStrictEqual({ dirty: true, pristine: false });
 });
+
+test('reset the initial value.', async () => {
+  const wrapper = render(
+    { data() { return { m: "" } } }
+  );
+
+  const { getByLabelText } = getQueriesForElement(wrapper.element);
+
+  const input = getByLabelText(/input/i);
+  await fireEvent.focus(input);
+  await fireEvent.update(input, "1");
+
+  resetInitialValueFor("test-form", "field", "2");
+  await wrapper.setData({ m: "2" });
+
+  expect(
+    formState("test-form")
+  ).toStrictEqual({ dirty: false, pristine: true });
+});
