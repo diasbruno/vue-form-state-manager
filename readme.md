@@ -14,7 +14,7 @@ Vue.directive('form-control', FormState);
 Use:
 
 ```vue
-<input ... form-control />
+<input ... form-control="'unique_name'" />
 ```
 
 Checking the form state:
@@ -29,7 +29,7 @@ formState(formId).pristine == formIsPristine(formId);
 
 ## roadmap
 
-- [] API to control the state programmatically.
+- [ ] API to control the state programmatically.
 
 ## licence
 

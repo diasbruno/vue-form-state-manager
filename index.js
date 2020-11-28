@@ -35,10 +35,10 @@ const isForm = e => checkInputType(e,"form");
 const formTable = {};
 const formNodes = {};
 
-function formFieldInit(formId, tag, value) {
+function formFieldInit(formId, name, value) {
   !formNodes[formId] && (formNodes[formId] = new Set());
-  formNodes[formId].add(tag);
-  formTable[tag] = {
+  formNodes[formId].add(name);
+  formTable[name] = {
     form: formId,
     pristine: true,
     dirty: false,
@@ -47,9 +47,9 @@ function formFieldInit(formId, tag, value) {
 }
 
 function formFieldUpdate(el, binding, vnode, pristine = true) {
-  let current = formTable[vnode.tag];
-  const dirty = current.initialValue !== vnodeValue(vnode);
-  current = (formTable[vnode.tag] = {
+  const { value: name } = binding;
+  let current = formTable[name];
+  current = (formTable[name] = {
     ...current,
     pristine,
     dirty: current.initialValue !== vnodeValue(vnode)
@@ -91,20 +91,23 @@ module.exports = {
     }
   },
   update(el, binding, vnode) {
-    let { pristine } = formTable[vnode.tag];
+    const { value: name } = binding;
+    let { pristine } = formTable[name];
     formFieldUpdate(el, binding, vnode, pristine);
   },
   unbind(el, binding, vnode) {
-    const { form } = formTable[vnode.tag];
-    formNodes[form].delete(vnode.tag);
-    delete formTable[vnode.tag];
+    const { value: name } = binding;
+    const { form } = formTable[name];
+    formNodes[form].delete(name);
+    delete formTable[name];
   },
   inserted(el, binding, vnode) {
+    const { value: name } = binding;
     let form = el;
     while (
       (form = form.parentNode),
       (!isForm(form) && form != document.body)
     );
-    formFieldInit(form.id, vnode.tag, vnodeValue(vnode));
+    formFieldInit(form.id, name, vnodeValue(vnode));
   }
 };
