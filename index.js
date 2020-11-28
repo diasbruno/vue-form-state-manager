@@ -1,4 +1,6 @@
-const Vue = require("vue");
+function defaultOrNot(v) { return v.default || v; }
+
+const Vue = defaultOrNot(require("vue"));
 
 const majorVersion = /^(\d)/.exec(Vue.version)[1];
 
