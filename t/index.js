@@ -7,20 +7,17 @@ const {
 
 Vue.directive("form-control", require("../index.js"));
 
-const C = Vue.component("Dummy", {
-  data() {
-    return { m: "" }
-  },
-  template: `
+const template = `
 <form id="test-form">
   <label for="i">input</label>
-  <input id="i" v-model="m" v-form-control />
+  <input id="i" ref="field" v-model="m" v-form-control />
 </form>
-`
-});
+`;
 
 test('initialize form state', async () => {
-  const { getByLabelText, getByText } = render(C);
+  const { getByLabelText, getByText } = render(
+    { data() { return { m: "" } }, template }
+  );
 
   expect(
     formState("test-form")
@@ -28,7 +25,9 @@ test('initialize form state', async () => {
 });
 
 test('make the form as not pristine on focus.', async () => {
-  const { getByLabelText } = render(C);
+  const { getByLabelText } = render(
+    { data() { return { m: "" } }, template }
+  );
 
   const input = getByLabelText(/input/i);
   await fireEvent.focus(input)
@@ -39,11 +38,12 @@ test('make the form as not pristine on focus.', async () => {
 });
 
 test('make the form dirty.', async () => {
-  const { getByLabelText } = render(C);
+  const { getByLabelText } = render(
+    { data() { return { m: "" } }, template }
+  );
 
   const input = getByLabelText(/input/i);
-  await fireEvent.focus(input)
-
+  await fireEvent.focus(input);
   await fireEvent.update(input, '1');
 
   expect(
